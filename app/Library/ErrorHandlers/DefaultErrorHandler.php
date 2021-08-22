@@ -6,7 +6,7 @@ class DefaultErrorHandler implements IErrorHandler
 {
   public function registerHandler()
   {
-    set_error_handler($this->errorHandler);
+    set_error_handler(array($this, 'errorHandler'));
   }
 
   public function errorHandler($errno, $errstr, $errfile, $errline)

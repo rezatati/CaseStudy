@@ -4,6 +4,7 @@ namespace Http\Controllers;
 
 class HotelerController
 {
-public fun
-
+  public function index()
+  {
+  }
 }
