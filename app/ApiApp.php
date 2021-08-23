@@ -4,8 +4,8 @@ use Library\ErrorHandlers\DefaultErrorHandler;
 use Library\Routing\RoutServiceProvider;
 
 define("APP_ROOT", $_SERVER['DOCUMENT_ROOT'] . '/../');
+global $config;
 $config = include "config.php";
-
 class ApiApp
 {
   public function run()
