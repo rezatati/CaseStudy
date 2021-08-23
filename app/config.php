@@ -1,8 +1,8 @@
 <?php
 return [
-  'db_name' => 'secret',
+  'db_name' => 'HotelDB',
   'db_user' => 'root',
   'db_pass' => 'secret',
-  'db_host' => 'localhost',
+  'db_host' => 'mysql',
 
 ];

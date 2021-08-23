@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\ErrorHandlers;
+namespace App\Library\ErrorHandlers;
 
 interface IErrorHandler
 {

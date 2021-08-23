@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Routing;
+namespace App\Library\Routing;
 
 class RoutServiceProvider
 {
@@ -44,7 +44,7 @@ class RoutServiceProvider
   }
   private function extractRoutes($filePath)
   {
-    $prefix = str_replace('.php', '', pathinfo($filePath)['basename']);
+    $prefix = str_replace('-', '/', str_replace('.php', '', pathinfo($filePath)['basename']));
     $routesArray = include $filePath;
     foreach ($routesArray as $key => $route) {
       $method = strtolower($route['method']);

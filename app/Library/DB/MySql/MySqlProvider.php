@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\DB\MySql;
+namespace App\Library\DB\MySql;
 
 class MySqlProvider
 {
