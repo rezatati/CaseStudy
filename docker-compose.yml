@@ -19,12 +19,20 @@ services:
     image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: "secret"
-      MYSQL_USER: "tutorial"
+      MYSQL_USER: "db_user"
       MYSQL_PASSWORD: "secret"
-      MYSQL_DATABASE: "tutorial"
+      MYSQL_DATABASE: "HotelDB"
     volumes:
       - mysqldata:/var/lib/mysql
     ports:
       - 3307:3306
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.9
+    depends_on:
+      - mysql
+    ports:
+      - "10003:80"
+    environment:
+      - PMA_HOST=mysql
 volumes:
   mysqldata: {}
