@@ -2,8 +2,7 @@
 
 return [
   "/hotels" => [
-    "type" => "get",
-    "handler" => "Http\Controller\HotelierController::index",
-
+    "method" => "get",
+    "handler" => "Http\Controllers\HotelierController::index",
   ],
 ];

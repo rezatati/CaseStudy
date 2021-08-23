@@ -2,7 +2,7 @@
 
 namespace Http\Controllers;
 
-class HotelerController
+class HotelierController
 {
   public function index()
   {
