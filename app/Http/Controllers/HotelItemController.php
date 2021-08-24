@@ -54,7 +54,7 @@ class HotelItemController
       $this->returnValidatioErrors($result['errors']);
     }
     $hotelItem = new HotelItem();
-    $hotelItem->hetelier_id = $hotelier->id;
+    $hotelItem->hotelier_id = $hotelier->id;
     $this->saveItem($hotelItem, $result);
   }
   public function update()
@@ -68,7 +68,7 @@ class HotelItemController
       if (!$hotelier) {
         $result['errors']['hotelier_id'] = 'invalid hotelier ID!.';
       } else {
-        $hotelItem->hetelier_id = $hotelier->id;
+        $hotelItem->hotelier_id = $hotelier->id;
       }
     }
 
@@ -109,6 +109,24 @@ class HotelItemController
     $hotelItem->price = $result['data']['price'];
     $hotelItem->availability = $result['data']['availability'];
     $hotelItem->save();
+    if ($hotelItem->location && count($hotelItem->location)) {
+      $hotelItem->location->city = $result['data']['city'];
+      $hotelItem->location->state = $result['data']['state'];
+      $hotelItem->location->country = $result['data']['country'];
+      $hotelItem->location->zip_code = $result['data']['zip_code'];
+      $hotelItem->location->address = $result['data']['address'];
+      $hotelItem->location->save();
+    } else {
+
+      $tmpData = [
+        'city' => $result['data']['city'],
+        'state' => $result['data']['state'],
+        'country' => $result['data']['country'],
+        'zip_code' => $result['data']['zip_code'],
+        'address' => $result['data']['address'],
+      ];
+      $hotelItem->location()->create($tmpData);
+    }
   }
   private function validateInputData()
   {
@@ -169,6 +187,36 @@ class HotelItemController
     $values['availability'] = $availability;
     if (!is_numeric($availability)) {
       $errors['availability'] = "availability must be a number";
+    }
+    $city = trim(get_request_value('city'));
+    $values['city'] = $city;
+    if (!$city) {
+      $errors['city'] = "city is required.";
+    }
+    $state = trim(get_request_value('state'));
+    $values['state'] = $state;
+    if (!$state) {
+      $errors['state'] = "state is required.";
+    }
+    $country = trim(get_request_value('country'));
+    $values['country'] = $country;
+    if (!$country) {
+      $errors['country'] = "country is required.";
+    }
+
+    $zip_code = trim(get_request_value('zip_code'));
+    $values['zip_code'] = $zip_code;
+    if (strlen($zip_code) != 5) {
+      $errors['zip_code'] = "zipcode length  must be 5";
+    }
+    if (!is_numeric($zip_code)) {
+      $errors['zip_code'] = "zipcode must be a number";
+    }
+
+    $address = trim(get_request_value('address'));
+    $values['address'] = $address;
+    if (!$address) {
+      $errors['address'] = "address is required.";
     }
     return ['errors' => $errors, 'data' => $values];
   }

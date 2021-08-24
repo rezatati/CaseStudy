@@ -10,7 +10,7 @@ class HotelierController
   public function index($hotelierID)
   {
 
-    $hotelier = Hotelier::find((int)$hotelierID);
+    $hotelier = Hotelier::with(['hotels', 'hotels.location'])->find((int)$hotelierID);
     if (!$hotelier) {
       notFoundError(400, "invalidhotelier ID");
     }
