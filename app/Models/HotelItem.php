@@ -6,14 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class HotelItem extends Model
 {
+  protected $appends = ['reputationBadge'];
 
-  /*
-  7. The reputation badge is a calculated value that depends on the reputation
+  public function getReputationBadgeAttribute()
+  {
 
-i. If reputation is <= 500 the value is red
-
-ii. If reputation is <= 799 the value is yellow
-
-iii. Otherwise the value is green
-  */
+    if ($this->reputation > 799) {
+      return 'green';
+    } elseif ($this->reputation > 500) {
+      return 'yellow';
+    }
+    return 'red';
+  }
 }

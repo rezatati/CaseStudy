@@ -12,9 +12,7 @@ class HotelierController
 
     $hotelier = Hotelier::find((int)$hotelierID);
     if (!$hotelier) {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'errors' => ['hotelier' => "invalid hotelier ID"]]);
-      exit;
+      notFoundError(400, "invalidhotelier ID");
     }
     header('Content-type: application/json', true, 200);
     echo json_encode(['result' => true, 'items' => $hotelier->hotels]);

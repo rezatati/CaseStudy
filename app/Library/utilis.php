@@ -64,3 +64,16 @@ function get_request_value($key, $default = null)
   }
   return $default;
 }
+
+function notFoundError($code, $msg, $title = "Resource Not Found")
+{
+  header('Content-type:application/problem+json', true, $code);
+  echo json_encode([
+    "type" => "https://example.net/not-found",
+    "title" => $title,
+    'invalid-params' => [
+      'item' => $msg
+    ]
+  ]);
+  exit;
+}

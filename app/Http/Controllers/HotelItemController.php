@@ -11,9 +11,7 @@ class HotelItemController
   {
     $hotelItem = HotelItem::find((int)$itemID);
     if (!$hotelItem) {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'errors' => ['hotel_item_id' => "invalid hotel item ID"]]);
-      exit;
+      notFoundError(400, "invalid hotel item ID");
     }
     if ($hotelItem->availability > 0) {
       $hotelItem->availability--;
@@ -22,18 +20,13 @@ class HotelItemController
       echo json_encode(['result' => true]);
       exit;
     } else {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'msg' => 'no more rooms on this hotel.']);
-      exit;
+      notFoundError(400, 'no more rooms on this hotel.');
     }
   }
   public function delete($itemID)
   {
     $hotelItem = HotelItem::find((int)$itemID);
     if (!$hotelItem) {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'errors' => ['hotel_item_id' => "invalid hotel item ID"]]);
-      exit;
     }
     $hotelItem->delete();
     echo json_encode(['result' => true]);
@@ -43,9 +36,7 @@ class HotelItemController
   {
     $hotelItem = HotelItem::find((int)$itemID);
     if (!$hotelItem) {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'errors' => ['hotel_item_id' => "invalid hotel item ID"]]);
-      exit;
+      notFoundError(400, "invalid hotel item ID");
     }
     header('Content-type: application/json', true, 200);
     echo json_encode(['result' => true, 'item' => $hotelItem]);
@@ -60,9 +51,7 @@ class HotelItemController
     }
 
     if (count($result['errors'])) {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'errors' => $result['errors']]);
-      exit;
+      $this->returnValidatioErrors($result['errors']);
     }
     $hotelItem = new HotelItem();
     $hotelItem->hetelier_id = $hotelier->id;
@@ -72,9 +61,7 @@ class HotelItemController
   {
     $hotelItem = HotelItem::find((int)get_request_value('hotel_item_id'));
     if (!$hotelItem) {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'errors' => ['hotel_item_id' => "invalid hotel item ID"]]);
-      exit;
+      notFoundError(400, "invalid hotel item ID");
     }
     if (isset($_POST['hotelier_id']) && $hotelItem->hotelier_id != (int)$_POST['hotelier_id']) {
       $hotelier = Hotelier::find((int)get_request_value('hotelier_id'));
@@ -87,11 +74,26 @@ class HotelItemController
 
     $result = $this->validateInputData();
     if (count($result['errors'])) {
-      header('Content-type: application/json', true, 404);
-      echo json_encode(['result' => false, 'errors' => $result['errors']]);
-      exit;
+      $this->returnValidatioErrors($result['errors']);
     }
     $this->saveItem($hotelItem, $result);
+  }
+  private function returnValidatioErrors($errors)
+  {
+    $errs = [];
+    foreach ($errors as $key => $value) {
+      $errs[] = [
+        "name" => $key,
+        "reason" => $value
+      ];
+    }
+    header('Content-type:application/problem+json', true, 400);
+    echo json_encode([
+      "type" => "https://example.net/validation-error",
+      "title" => "Your request parameters didn't validate.",
+      'invalid-params' => $errs
+    ]);
+    exit;
   }
   private function saveItem($hotelItem, $result)
   {

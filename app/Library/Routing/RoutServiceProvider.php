@@ -23,7 +23,7 @@ class RoutServiceProvider
   {
     $class = explode('::', $route['handler'])[0];
     $method = explode('::', $route['handler'])[1];
-    if ($route['params']) {
+    if (isset($route['params'])) {
       (new $class)->$method($route['params']);
       return;
     }
@@ -31,9 +31,7 @@ class RoutServiceProvider
   }
   private function  HandleNotFoundRoute()
   {
-    header('Content-type: application/json', true, 404);
-    echo json_encode(['result' => 'Page Not Found']);
-    exit;
+    notFoundError(404, 'Page Not Found');
   }
   private function findRoute()
   {

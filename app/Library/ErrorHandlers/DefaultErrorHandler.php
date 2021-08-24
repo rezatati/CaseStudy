@@ -11,13 +11,19 @@ class DefaultErrorHandler implements IErrorHandler
 
   public function errorHandler($errno, $errstr, $errfile, $errline)
   {
-    header("Content-type: application/json", true, 500);
+
+    $params = [];
     if (defined('DEBUG_MODE') && DEBUG_MODE) {
-      echo json_encode(['error_msg' => $errstr, 'file' => $errfile, 'line' => $errline]);
-      exit();
+      $params = ['error_msg' => $errstr, 'file' => $errfile, 'line' => $errline];
     }
     ///todo Log Error 
-    echo json_encode(['result' => 'Internal Server Error ']);
-    exit();
+
+    header('Content-type:application/problem+json', true, 500);
+    echo json_encode([
+      "type" => "https://example.net/internal-server-error",
+      "title" => "Internal Server Error",
+      'invalid-params' => $params
+    ]);
+    exit;
   }
 }
