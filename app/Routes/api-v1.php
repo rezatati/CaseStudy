@@ -1,6 +1,15 @@
 <?php
 
+/**
+ * list of defined routes 
+ * 
+ */
 return [
+  [
+    "url" => "/hotelier",
+    "method" => "post",
+    "handler" => "App\Http\Controllers\HotelierController::insert",
+  ],
   [
     "url" => "/hotelier",
     "method" => "get",

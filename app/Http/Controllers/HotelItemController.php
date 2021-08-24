@@ -7,6 +7,11 @@ use App\Models\HotelItem;
 
 class HotelItemController
 {
+  /**
+   * book a Hotel item and decrease availability
+   * 
+   * @param int $itemID ID of Hotelitem to book
+   */
   public function book($itemID)
   {
     $hotelItem = HotelItem::find((int)$itemID);
@@ -23,6 +28,11 @@ class HotelItemController
       notFoundError(400, 'no more rooms on this hotel.');
     }
   }
+  /**
+   * delete a Hotel item  
+   * 
+   * @param int $itemID ID of Hotelitem to book
+   */
   public function delete($itemID)
   {
     $hotelItem = HotelItem::find((int)$itemID);
@@ -32,9 +42,15 @@ class HotelItemController
     echo json_encode(['result' => true]);
     exit;
   }
+
+  /**
+   * retrive single Hotel item  
+   * 
+   * @param int $itemID ID of Hotelitem to book
+   */
   public function get($itemID)
   {
-    $hotelItem = HotelItem::find((int)$itemID);
+    $hotelItem = HotelItem::with('location')->find((int)$itemID);
     if (!$hotelItem) {
       notFoundError(400, "invalid hotel item ID");
     }
@@ -42,6 +58,11 @@ class HotelItemController
     echo json_encode(['result' => true, 'item' => $hotelItem]);
     exit;
   }
+  /**
+   * create single Hotel item  
+   * 
+   *  
+   */
   public function insert()
   {
     $result = $this->validateInputData();
@@ -51,12 +72,19 @@ class HotelItemController
     }
 
     if (count($result['errors'])) {
-      $this->returnValidatioErrors($result['errors']);
+      returnValidatioErrors($result['errors']);
     }
     $hotelItem = new HotelItem();
     $hotelItem->hotelier_id = $hotelier->id;
-    $this->saveItem($hotelItem, $result);
+    $hotelItem = $this->saveItem($hotelItem, $result);
+    header('Content-type: application/json', true, 200);
+    echo json_encode(['result' => true, 'item' => $hotelItem]);
+    exit;
   }
+  /**
+   * update single Hotel item  
+   * 
+   */
   public function update()
   {
     $hotelItem = HotelItem::find((int)get_request_value('hotel_item_id'));
@@ -74,27 +102,20 @@ class HotelItemController
 
     $result = $this->validateInputData();
     if (count($result['errors'])) {
-      $this->returnValidatioErrors($result['errors']);
+      returnValidatioErrors($result['errors']);
     }
-    $this->saveItem($hotelItem, $result);
-  }
-  private function returnValidatioErrors($errors)
-  {
-    $errs = [];
-    foreach ($errors as $key => $value) {
-      $errs[] = [
-        "name" => $key,
-        "reason" => $value
-      ];
-    }
-    header('Content-type:application/problem+json', true, 400);
-    echo json_encode([
-      "type" => "https://example.net/validation-error",
-      "title" => "Your request parameters didn't validate.",
-      'invalid-params' => $errs
-    ]);
+    $hotelItem = $this->saveItem($hotelItem, $result);
+    header('Content-type: application/json', true, 200);
+    echo json_encode(['result' => true, 'item' => $hotelItem]);
     exit;
   }
+
+  /**
+   * save or update hotel item  
+   * 
+   * @param HotelItem $hotelItem hotel item model that is going to be updated or saved
+   * @param array $result result of validation 
+   */
   private function saveItem($hotelItem, $result)
   {
 
@@ -109,7 +130,7 @@ class HotelItemController
     $hotelItem->price = $result['data']['price'];
     $hotelItem->availability = $result['data']['availability'];
     $hotelItem->save();
-    if ($hotelItem->location && count($hotelItem->location)) {
+    if ($hotelItem->location) {
       $hotelItem->location->city = $result['data']['city'];
       $hotelItem->location->state = $result['data']['state'];
       $hotelItem->location->country = $result['data']['country'];
@@ -127,7 +148,12 @@ class HotelItemController
       ];
       $hotelItem->location()->create($tmpData);
     }
+    return $hotelItem;
   }
+  /**
+   * validate request data and return pure data for saving or updating
+   * 
+   */
   private function validateInputData()
   {
     $values = [];

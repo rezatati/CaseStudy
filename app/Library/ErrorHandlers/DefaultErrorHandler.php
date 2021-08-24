@@ -1,14 +1,31 @@
 <?php
 
+/**
+ * class for handling all errors and exceptions 
+ * 
+ */
+
+
 namespace App\Library\ErrorHandlers;
 
 class DefaultErrorHandler implements IErrorHandler
 {
+  /**
+   * regester default handler for php
+   * 
+   */
   public function registerHandler()
   {
     set_error_handler(array($this, 'errorHandler'));
   }
-
+  /**
+   * handle errro and send result to as response 
+   * 
+   * @param int $errno error number
+   * @param string $errstr error message  
+   * @param string $errfile file that error ocures 
+   * @param string $errline  line number of file that error created  
+   */
   public function errorHandler($errno, $errstr, $errfile, $errline)
   {
 

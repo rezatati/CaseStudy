@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * load autoload file and utils and init db 
+ */
 require "vendor/autoload.php";
 require_once "Library/utilis.php";
 

@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * routing engine : proccess routes and call related class and function  based on defined routes 
+ * 
+ */
+
 namespace App\Library\Routing;
 
 class RoutServiceProvider
 {
   private $routes = [];
+  /**
+   * start engin  
+   * 
+ 
+   */
   public function run()
   {
     $files = glob(APP_ROOT . "/Routes/*.php");
@@ -19,6 +29,11 @@ class RoutServiceProvider
 
     $this->ServeRoute($foundedRoute);
   }
+  /**
+   * run related calss and  function of final route  
+   * 
+   * @param array $route final route
+   */
   private function ServeRoute($route)
   {
     $class = explode('::', $route['handler'])[0];
@@ -29,10 +44,18 @@ class RoutServiceProvider
     }
     (new $class)->$method();
   }
+  /**
+   * if requested url is not in route list this function return related response   
+   * 
+   */
   private function  HandleNotFoundRoute()
   {
     notFoundError(404, 'Page Not Found');
   }
+  /**
+   * parse requested url and try to find it in route list   
+   * 
+   */
   private function findRoute()
   {
     $url = trim(strtolower($_SERVER['REQUEST_URI']), '/');
@@ -58,6 +81,12 @@ class RoutServiceProvider
     }
     return null;
   }
+
+  /**
+   * extract all defined routes in a file   
+   * 
+   * @param string $filePath  path of route defination file  
+   */
   private function extractRoutes($filePath)
   {
     $prefix = str_replace('-', '/', str_replace('.php', '', pathinfo($filePath)['basename']));
@@ -75,12 +104,4 @@ class RoutServiceProvider
       }
     }
   }
-} 
-
-
-
-/*
-
-            
-        
-*/
+}
