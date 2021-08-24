@@ -1,5 +1,10 @@
 <?php
-class HotelItem
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class HotelItem extends Model
 {
 
   /*
